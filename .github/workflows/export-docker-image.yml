@@ -59,10 +59,14 @@ jobs:
           echo "Release Tag: ${RELEASE_TAG}"
           ls -lh ${TAR_FILE}
           
+          # 生成 artifact 名称（替换 / 为 -）
+          ARTIFACT_NAME="${FILENAME}-${IMAGE_TAG}"
+          
           # 保存文件名和 release tag 到输出，供后续步骤使用
           echo "tar_file=${TAR_FILE}" >> $GITHUB_OUTPUT
           echo "tar_gz_file=${TAR_GZ_FILE}" >> $GITHUB_OUTPUT
           echo "release_tag=${RELEASE_TAG}" >> $GITHUB_OUTPUT
+          echo "artifact_name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
 
       - name: Compress tar file
         run: |
@@ -86,7 +90,7 @@ jobs:
       - name: Upload artifact (backup)
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ inputs.image_name }}-${{ inputs.image_tag }}
+          name: ${{ steps.export.outputs.artifact_name }}
           path: ${{ steps.export.outputs.tar_gz_file }}
           retention-days: 7
 
